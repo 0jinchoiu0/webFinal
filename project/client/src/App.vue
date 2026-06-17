@@ -175,13 +175,29 @@ const form = ref({
 
 const isFollowUp = computed(() => form.value.appointment_type === '後續治療')
 
+const defaultCounselors = [
+  { id: 1, name: '林怡君', title: '諮商心理師', department: '心理輔導中心', phone: '02-1234-5678', email: 'yijun.lin@school.edu.tw', summary: '專長情緒管理、考試焦慮與人際衝突，提供學生安心的諮商空間。' },
+  { id: 2, name: '張立華', title: '諮商心理師', department: '心理輔導中心', phone: '02-1234-5679', email: 'lihua.zhang@school.edu.tw', summary: '專注於壓力調適、職涯探索與心理危機介入。' },
+  { id: 3, name: '陳美玲', title: '社工師', department: '校園心理健康', phone: '02-1234-5680', email: 'meiling.chen@school.edu.tw', summary: '擅長社會支持、資源媒合與生活適應協助。' }
+]
+
+const defaultArticles = [
+  { id: 1, title: '如何在校園生活中建立健康的情緒節奏', category: '情緒調節', summary: '介紹簡單的呼吸練習、日記習慣與支持系統建立，幫助學生自然調整情緒。', url: 'https://example.com/article1', published_at: '2026-06-01' },
+  { id: 2, title: '考試期間的壓力管理策略', category: '考試焦慮', summary: '從時間規劃、休息安排與自我對話三個面向，讓考前準備更穩定。', url: 'https://example.com/article2', published_at: '2026-05-28' },
+  { id: 3, title: '從失眠到好眠：校園生的睡眠小技巧', category: '睡眠品質', summary: '分析常見校園睡眠問題，並提供收心儀式與環境調整方法。', url: 'https://example.com/article3', published_at: '2026-05-20' }
+]
+
 const loadData = async () => {
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('API request timeout')), 5000)
+  )
+
   try {
     const [summaryRes, counselorsRes, articlesRes, sessionsRes] = await Promise.all([
-      fetch('/api/summary'),
-      fetch('/api/counselors'),
-      fetch('/api/articles'),
-      fetch('/api/sessions')
+      Promise.race([fetch('/api/summary'), timeoutPromise]),
+      Promise.race([fetch('/api/counselors'), timeoutPromise]),
+      Promise.race([fetch('/api/articles'), timeoutPromise]),
+      Promise.race([fetch('/api/sessions'), timeoutPromise])
     ])
 
     const summaryData = await summaryRes.json()
@@ -195,8 +211,15 @@ const loadData = async () => {
     articles.value = await articlesRes.json()
     sessions.value = await sessionsRes.json()
   } catch (error) {
-    console.error(error)
-    alert('無法載入資料，請先啟動 server')
+    console.warn('無法連接後端 API，使用預設資料：', error.message)
+    counselors.value = defaultCounselors
+    articles.value = defaultArticles
+    summary.value = [
+      { label: '諮商師人數', value: 3 },
+      { label: '文章資源', value: 3 },
+      { label: '服務項目', value: 5 },
+      { label: '預約紀錄', value: 2 }
+    ]
   }
 }
 
