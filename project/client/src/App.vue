@@ -44,12 +44,12 @@
     </section>
 
     <section class="section-block">
-      <h2>服務時段</h2>
+      <h2>本週還可以預約的時間</h2>
       <div class="card-grid cards-3">
-        <article class="card" v-for="s in sessions" :key="s.id">
-          <h3>{{ s.type }}</h3>
-          <p class="meta">{{ s.duration }} · {{ s.mode }}</p>
-          <p>{{ s.description }}</p>
+        <article class="card" v-for="slot in availableSlots" :key="slot.id">
+          <h3>{{ slot.day }}</h3>
+          <p class="meta">{{ slot.time }}</p>
+          <p>{{ slot.counselingType }}</p>
         </article>
       </div>
     </section>
@@ -148,6 +148,18 @@ const articles = ref([])
 const sessions = ref([])
 const summary = ref([])
 const appointmentResult = ref(null)
+
+const availableSlots = ref([
+  { id: 1, day: '週一', time: '14:00-15:00', counselingType: '情緒支持' },
+  { id: 2, day: '週一', time: '15:00-16:00', counselingType: '壓力管理' },
+  { id: 3, day: '週二', time: '10:00-11:00', counselingType: '初次諮商' },
+  { id: 4, day: '週二', time: '14:00-15:00', counselingType: '情緒支持' },
+  { id: 5, day: '週三', time: '09:00-10:00', counselingType: '職涯探索' },
+  { id: 6, day: '週三', time: '15:00-16:00', counselingType: '人際關係' },
+  { id: 7, day: '週四', time: '13:00-14:00', counselingType: '初次諮商' },
+  { id: 8, day: '週四', time: '16:00-17:00', counselingType: '壓力管理' },
+  { id: 9, day: '週五', time: '10:00-11:00', counselingType: '情緒支持' }
+])
 
 const form = ref({
   student_name: '',
