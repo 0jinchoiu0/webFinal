@@ -74,83 +74,23 @@ http://localhost:5174
 - 服務時段說明
 - 預約紀錄
 
-## 部署
+## GitHub 提交與本地執行
 
-本專案支援單一 Azure App Service 部署，讓 `project/server` 同時提供 API 與前端靜態頁面。
+本專案代碼已提交至 GitHub：`https://github.com/0jinchoiu0/webFinal`
 
-### Azure App Service（建議）
+任何人可以 clone 後在本地執行此專案。
 
-1. 在 Azure Portal 建立 Resource Group
-2. 建立 App Service Plan（Linux）
-3. 建立 Node.js Web App，Runtime 選 `NODE|20-lts`
-4. 下載 Azure App Service 的 Publish Profile
-5. 在 GitHub repository 加入 workflow 檔案，並設定 Azure Publish Profile secrets
+### 本地執行步驟
 
-### GitHub Actions 自動部署
+按照上述「啟動方式」的步驟 1-5 即可：
 
-新增 `.github/workflows/azure-deploy.yml` 檔案，內容如下：
+1. 安裝 server 依賴並啟動後端
+2. 安裝 client 依賴並啟動前端
+3. 瀏覽器開啟 `http://localhost:5174`
 
-```yaml
-name: Azure App Service Deploy
+### 本地編譯打包
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install client dependencies
-        run: |
-          cd project/client
-          npm install
-
-      - name: Build client
-        run: |
-          cd project/client
-          npm run build
-
-      - name: Install server dependencies
-        run: |
-          cd project/server
-          npm install
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v4
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: project/server
-```
-
-### Azure Secrets
-
-在 GitHub repository 的 Settings > Secrets and variables > Actions 中建立：
-
-- `AZURE_WEBAPP_NAME`
-- `AZURE_WEBAPP_PUBLISH_PROFILE`
-
-### 本地部署測試
-
-確認後端可執行：
-
-```bash
-cd project/server
-npm install
-npm start
-```
-
-確認前端可打包：
+若要測試生產環境的前端打包：
 
 ```bash
 cd project/client
@@ -158,4 +98,4 @@ npm install
 npm run build
 ```
 
-部署完成後，Azure App Service 會同時提供前端靜態檔案與 API。
+產生的 `dist` 資料夾會被 Express 提供為靜態檔案。
