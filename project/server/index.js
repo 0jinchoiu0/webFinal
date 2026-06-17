@@ -302,6 +302,16 @@ app.get('/api/summary', (req, res) => {
   res.json({ counselorCount, articleCount, sessionCount, appointmentCount })
 })
 
+const clientDistPath = path.join(__dirname, '../client/dist')
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath))
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(clientDistPath, 'index.html'))
+    }
+  })
+}
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Campus mental health API running at http://localhost:${PORT}`)
