@@ -302,7 +302,7 @@ app.get('/api/summary', (req, res) => {
   res.json({ counselorCount, articleCount, sessionCount, appointmentCount })
 })
 
-const clientDistPath = path.join(__dirname, '../client/dist')
+const clientDistPath = path.join(__dirname, 'client/dist')
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath))
   app.get('*', (req, res) => {

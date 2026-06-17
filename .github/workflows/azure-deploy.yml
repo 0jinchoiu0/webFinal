@@ -27,6 +27,12 @@ jobs:
           cd project/client
           npm run build
 
+      - name: Copy client build into server folder
+        run: |
+          rm -rf project/server/client/dist
+          mkdir -p project/server/client
+          cp -r project/client/dist project/server/client/dist
+
       - name: Install server dependencies
         run: |
           cd project/server
